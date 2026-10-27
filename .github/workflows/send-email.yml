@@ -1,32 +1,34 @@
-name: Send Spoofed Email Test
+name: Test Email Spoofing on All Providers
 on: [push]
 jobs:
-  send-email:
+  test-providers:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        provider:
+          - { name: "Gmail", mx: "gmail-smtp-in.l.google.com", to: "ajeetnasa@gmail.com" }
+          - { name: "Yahoo", mx: "mta5.am0.yahoodns.net", to: "test@yahoo.com" }
+          - { name: "Outlook", mx: "outlook-com.olc.protection.outlook.com", to: "test@outlook.com" }
+          - { name: "ProtonMail", mx: "mail.protonmail.ch", to: "test@protonmail.com" }
+          - { name: "Zoho", mx: "smtp.zoho.com", to: "test@zohomail.com" }
+          - { name: "Yandex", mx: "mx.yandex.net", to: "test@yandex.com" }
+          - { name: "AOL", mx: "mx.aol.com", to: "test@aol.com" }
+          - { name: "iCloud", mx: "mx01.mail.icloud.com", to: "test@icloud.com" }
     steps:
-      - name: Send Email
+      - name: Test ${{ matrix.provider.name }}
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: gmail-smtp-in.l.google.com
+          server_address: ${{ matrix.provider.mx }}
           server_port: 25
           username: noreply@eicmai.in
           password: ""
-          subject: ICMAI Security Test - Email Spoofing Proof
+          subject: ICMAI Security Test - ${{ matrix.provider.name }}
           body: |
-            Dear Student,
-            
-            SECURITY TEST - This email was SPOOFED from noreply@eicmai.in
-            
-            This proves that eicmai.in has NO email authentication:
-            - No SPF record
-            - No DKIM record  
-            - No DMARC record
-            
-            Any attacker can send emails pretending to be from ICMAI.
-            Students would trust these emails as official.
-            
-            This is a security assessment conducted with permission.
-            
-            Date: October 27, 2026
-          to: ajeetnasa@gmail.com
-          from: ICMAI Student Portal <noreply@eicmai.in>
+            This is a spoofed email test from noreply@eicmai.in
+            Testing if ${{ matrix.provider.name }} accepts unauthenticated email.
+            eicmai.in has no SPF/DKIM/DMARC.
+          to: ${{ matrix.provider.to }}
+          from: ICMAI <noreply@eicmai.in>
+        continue-on-error: true
+      - name: Report
+        run: echo "Tested ${{ matrix.provider.name }}"
