@@ -1,0 +1,32 @@
+name: Send Spoofed Email Test
+on: [push]
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: gmail-smtp-in.l.google.com
+          server_port: 25
+          username: noreply@eicmai.in
+          password: ""
+          subject: ICMAI Security Test - Email Spoofing Proof
+          body: |
+            Dear Student,
+            
+            SECURITY TEST - This email was SPOOFED from noreply@eicmai.in
+            
+            This proves that eicmai.in has NO email authentication:
+            - No SPF record
+            - No DKIM record  
+            - No DMARC record
+            
+            Any attacker can send emails pretending to be from ICMAI.
+            Students would trust these emails as official.
+            
+            This is a security assessment conducted with permission.
+            
+            Date: October 27, 2026
+          to: ajeetnasa@gmail.com
+          from: ICMAI Student Portal <noreply@eicmai.in>
